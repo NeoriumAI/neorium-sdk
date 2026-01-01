@@ -1,0 +1,30 @@
+{
+  "name": "@neorium/cli",
+  "version": "0.1.0",
+  "description": "NEORIUM (neo) — Your DeFi Co-Pilot. CLI for testing AI responses.",
+  "license": "MIT",
+  "type": "module",
+  "bin": {
+    "neorium": "./dist/index.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup src/index.ts --format esm --sourcemap --clean",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run",
+    "lint": "node -e \"process.exit(0)\"",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@neorium/sdk": "0.1.0",
+    "commander": "^12.1.0",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "tsup": "^8.3.5",
+    "typescript": "^5.6.3",
+    "vitest": "^4.0.16"
+  }
+}

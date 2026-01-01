@@ -1,0 +1,27 @@
+{
+  "name": "neorium",
+  "private": true,
+  "version": "0.1.0",
+  "description": "NEORIUM (neo) — Your DeFi Co-Pilot.",
+  "license": "MIT",
+  "workspaces": [
+    "packages/*",
+    "extensions/*"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "build": "npm run --workspaces build",
+    "test": "npm run --workspaces test",
+    "lint": "npm run --workspaces lint",
+    "typecheck": "npm run --workspaces typecheck",
+    "clean": "npm run --workspaces clean",
+    "package:extension": "npm -w extensions/neorium-copilot run package"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.30",
+    "typescript": "^5.6.3",
+    "vitest": "^4.0.16"
+  }
+}

@@ -1,0 +1,94 @@
+{
+  "name": "neorium-copilot",
+  "displayName": "NEORIUM (neo) — Your DeFi Co-Pilot",
+  "description": "Copilot-style DeFi assistant for VS Code (commands + inline completion).",
+  "version": "0.1.0",
+  "publisher": "neoriumai",
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.90.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "main": "./dist/extension.js",
+  "activationEvents": [
+    "onCommand:neorium.askDefiCopilot",
+    "onCommand:neorium.explainSelection",
+    "onCommand:neorium.riskScanAddress",
+    "onCommand:neorium.generateDefiScript",
+    "onCommand:neorium.fixCodeUsingNeo",
+    "onLanguage:typescript",
+    "onLanguage:javascript",
+    "onLanguage:rust",
+    "onLanguage:markdown"
+  ],
+  "contributes": {
+    "commands": [
+      {
+        "command": "neorium.askDefiCopilot",
+        "title": "Neorium: Ask DeFi Copilot"
+      },
+      {
+        "command": "neorium.explainSelection",
+        "title": "Neorium: Explain Selected Text"
+      },
+      {
+        "command": "neorium.riskScanAddress",
+        "title": "Neorium: Risk Scan Address"
+      },
+      {
+        "command": "neorium.generateDefiScript",
+        "title": "Neorium: Generate DeFi Script (TypeScript)"
+      },
+      {
+        "command": "neorium.fixCodeUsingNeo",
+        "title": "Neorium: Fix Code Using neo"
+      }
+    ],
+    "configuration": {
+      "title": "Neorium",
+      "properties": {
+        "neorium.baseUrl": {
+          "type": "string",
+          "default": "https://api.neorium.ai",
+          "description": "Neorium API base URL."
+        },
+        "neorium.model": {
+          "type": "string",
+          "default": "neorium-1",
+          "description": "Default model."
+        },
+        "neorium.temperature": {
+          "type": "number",
+          "default": 0.2,
+          "minimum": 0,
+          "maximum": 2,
+          "description": "Sampling temperature."
+        },
+        "neorium.enableInlineCompletion": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable inline completions for supported languages."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "build": "tsup src/extension.ts --format cjs --platform node --target node18 --outDir dist --sourcemap --clean --external vscode",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "lint": "node -e \"process.exit(0)\"",
+    "test": "vitest run --passWithNoTests",
+    "package": "npx --yes @vscode/vsce package --no-dependencies",
+    "clean": "rm -rf dist *.vsix"
+  },
+  "dependencies": {
+    "@neorium/sdk": "0.1.0"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.90.0",
+    "tsup": "^8.3.5",
+    "typescript": "^5.6.3",
+    "vitest": "^4.0.16"
+  }
+}
