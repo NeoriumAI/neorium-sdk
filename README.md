@@ -1,5 +1,7 @@
 # NEORIUM (neo) — Your DeFi Co-Pilot.
 
+![NEORIUM](assets/background.png)
+
 Production-grade, SDK-first monorepo for building DeFi-aware AI experiences.
 
 **Scope (pure SDK)**
