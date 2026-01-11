@@ -146,6 +146,43 @@ const neo_explain_transaction: NeoToolHandler = async (args, ctx) => {
   };
 };
 
+const HolderSnapshotArgs = z
+  .object({
+    chain: z.string(),
+    address: z.string(),
+    rpcUrl: z.string().optional(),
+    topN: z.number().optional()
+  })
+  .strict();
+
+const neo_holder_snapshot: NeoToolHandler = async (args, ctx) => {
+  const a = HolderSnapshotArgs.parse(args);
+  if (a.chain.toLowerCase() !== 'solana') {
+    return {
+      chain: a.chain,
+      address: a.address,
+      note: 'Chain not supported by default handler. Provide your own tool handler.'
+    };
+  }
+  const rpcUrl = a.rpcUrl ?? DEFAULT_SOLANA_RPC;
+  const supply = await solanaRpc<any>(rpcUrl, 'getTokenSupply', [a.address], ctx.signal);
+  // top holders via getTokenLargestAccounts
+  let topHolders: any = null;
+  try {
+    const largest = await solanaRpc<any>(rpcUrl, 'getTokenLargestAccounts', [a.address], ctx.signal);
+    topHolders = largest?.value?.slice(0, a.topN ?? 5) ?? [];
+  } catch {
+    topHolders = [];
+  }
+  return {
+    chain: 'solana',
+    address: a.address,
+    tokenSupply: supply,
+    topHolders,
+    note: 'This is read-only snapshot data; do not treat as exhaustive.'
+  };
+};
+
 export function registerDeFiTools(options: RegisterDeFiToolsOptions = {}): NeoToolRegistry {
   if (options.schemasOnly) {
     return { tools: NEO_DEFI_TOOL_SCHEMAS };
@@ -155,7 +192,8 @@ export function registerDeFiTools(options: RegisterDeFiToolsOptions = {}): NeoTo
     neo_explain_token,
     neo_risk_scan,
     neo_simulate_swap,
-    neo_explain_transaction
+    neo_explain_transaction,
+    neo_holder_snapshot
   };
 
   return {

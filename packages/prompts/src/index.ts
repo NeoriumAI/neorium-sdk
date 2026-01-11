@@ -42,6 +42,21 @@ TOOL POLICY:
 
 You are NEORIUM — Your DeFi Co-Pilot.`;
 
+export const DEFAULT_NEO_HOLDER_PROMPT = `${DEFAULT_NEO_SYSTEM_PROMPT}
+
+AUDIENCE: Token holders / investors.
+GOAL: Produce a concise, factual holder update that is safe for public distribution:
+- TL;DR (1 line)
+- 3-6 short bullets (facts, recent events, vesting / circulating supply if known)
+- Explicit risks/uncertainties and assumptions
+- One-sentence call-to-action (e.g., check governance forum, stake, verify contracts)
+
+STYLE:
+- Short bullets, plain language, no financial advice.
+- Cite data sources when available.
+- Keep results <= 200 words for easy posting (Twitter-friendly).
+`;
+
 export const NEO_DEFI_TOOL_SCHEMAS: NeoToolSchema[] = [
   {
     type: 'function',
@@ -125,6 +140,24 @@ export const NEO_DEFI_TOOL_SCHEMAS: NeoToolSchema[] = [
           term: { type: 'string', description: 'DeFi term to explain.' }
         },
         required: ['term']
+      }
+    }
+  },
+  {
+    type: 'function',
+    function: {
+      name: 'neo_holder_snapshot',
+      description: 'Return a concise holder snapshot (supply, top holders, vesting hints) (read-only).',
+      parameters: {
+        type: 'object',
+        additionalProperties: false,
+        properties: {
+          chain: { type: 'string' },
+          address: { type: 'string' },
+          rpcUrl: { type: 'string' },
+          topN: { type: 'number', description: 'Number of top holders to return (optional, default 5).' }
+        },
+        required: ['chain', 'address']
       }
     }
   }

@@ -18,6 +18,7 @@
     "onCommand:neorium.riskScanAddress",
     "onCommand:neorium.generateDefiScript",
     "onCommand:neorium.fixCodeUsingNeo",
+    "onCommand:neorium.generateHolderUpdate",
     "onLanguage:typescript",
     "onLanguage:javascript",
     "onLanguage:rust",
@@ -44,6 +45,10 @@
       {
         "command": "neorium.fixCodeUsingNeo",
         "title": "Neorium: Fix Code Using neo"
+      },
+      {
+        "command": "neorium.generateHolderUpdate",
+        "title": "Neorium: Generate Holder Update"
       }
     ],
     "configuration": {

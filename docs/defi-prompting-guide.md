@@ -25,3 +25,20 @@ This guide helps you ask better DeFi questions and interpret answers responsibly
 - Never assume legitimacy from a single signal.
 - Always verify with multiple sources and the official program/docs.
 - Treat newly launched tokens and thin liquidity as high risk.
+
+## Token holder / Investor updates
+Use this template when generating concise updates for holders or investors. Keep the output short and factual; do not provide financial advice.
+
+Template:
+- TL;DR (1 line)
+- 3–6 short bullets: key facts (circulating supply, vesting/locks, recent events)
+- Explicit risks / uncertainties
+- Single CTA (e.g., check governance forum, stake, verify contract links)
+
+Notes:
+- Be explicit about data sources and assumptions.
+- Avoid jargon; use plain language.
+- Limit length to ~200 words to be easy to post on social platforms.
+
+Example prompt:
+"Generate a concise investor-facing update for token <MINT>: TL;DR (1 line), 3–6 bullets with facts, explicit risks, and a single call-to-action. Cite data sources when available."

@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { NeoriumClient, buildNeoSystemPrompt, registerDeFiTools } from '@neorium/sdk';
+import { NeoriumClient, buildNeoSystemPrompt, buildNeoHolderPrompt, registerDeFiTools } from '@neorium/sdk';
 
 const SECRET_KEY = 'neorium.apiKey';
 
@@ -166,6 +166,46 @@ export function activate(context: vscode.ExtensionContext) {
             ],
             tools: registry.tools,
             tool_choice: { type: 'function', function: { name: 'neo_risk_scan' } }
+          },
+          {
+            ...(registry.handlers ? { toolHandlers: registry.handlers } : {})
+          }
+        );
+        const content = resp.choices?.[0]?.message?.content ?? '';
+        await maybeInsertIntoEditor(content);
+      } catch (e: any) {
+        output.appendLine(`Error: ${e?.message ?? String(e)}`);
+        vscode.window.showErrorMessage('Neorium request failed. See OutputChannel: Neorium.');
+      }
+    })
+  );
+
+  context.subscriptions.push(
+    vscode.commands.registerCommand('neorium.generateHolderUpdate', async () => {
+      try {
+        const address = await vscode.window.showInputBox({
+          title: 'Neorium: Generate Holder Update',
+          prompt: 'Enter token mint / contract address.',
+          ignoreFocusOut: true
+        });
+        if (!address) return;
+        const chain = await vscode.window.showInputBox({ title: 'Chain (e.g. solana)', value: 'solana', ignoreFocusOut: true });
+        const apiKey = await getApiKey(context);
+        if (!apiKey) return;
+        const client = makeClient(apiKey);
+        const registry = registerDeFiTools();
+        output.appendLine('generateHolderUpdate: request');
+        const resp = await client.chat.completions.create(
+          {
+            messages: [
+              { role: 'system', content: buildNeoHolderPrompt({ chainHint: chain ?? 'solana' }) },
+              {
+                role: 'user',
+                content: `Generate a concise investor-facing update for token ${address}: TL;DR (1 line), 3-6 bullets, explicit risks, and a single CTA.`
+              }
+            ],
+            tools: registry.tools,
+            tool_choice: { type: 'function', function: { name: 'neo_holder_snapshot' } }
           },
           {
             ...(registry.handlers ? { toolHandlers: registry.handlers } : {})

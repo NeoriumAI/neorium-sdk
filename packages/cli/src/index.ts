@@ -7,6 +7,7 @@ import {
   NeoNetworkError,
   NeoRateLimitError,
   buildNeoSystemPrompt,
+  buildNeoHolderPrompt,
   registerDeFiTools
 } from '@neorium/sdk';
 
@@ -185,6 +186,41 @@ export function createProgram(): Command {
           }
         );
         process.stdout.write((resp.choices?.[0]?.message?.content ?? '') + '\n');
+      } catch (e) {
+        printError(e);
+        process.exitCode = 1;
+      }
+    });
+
+  program
+    .command('holder-update')
+    .description('Generate a concise holder-facing update for a token')
+    .requiredOption('--chain <chain>', 'Chain identifier (e.g. solana)')
+    .requiredOption('--address <address>', 'Token mint / contract address')
+    .option('--topN <n>', 'Number of top holders to include (default 5)', (v) => Number(v), 5)
+    .option('--json', 'Output JSON')
+    .action(async (options: { chain: string; address: string; topN?: number; json?: boolean }) => {
+      try {
+        const client = getClient();
+        const registry = registerDeFiTools();
+        const system = buildNeoHolderPrompt({ chainHint: options.chain });
+        const messages = [
+          { role: 'system' as const, content: system },
+          { role: 'user' as const, content: `Write a short investor-facing update for token ${options.address}. Include TL;DR (1 line), 3-6 bullets, explicit risks, and a single CTA.` }
+        ];
+        const resp = await client.chat.completions.create(
+          {
+            messages,
+            tools: registry.tools,
+            tool_choice: { type: 'function', function: { name: 'neo_holder_snapshot' } }
+          },
+          {
+            ...(registry.handlers ? { toolHandlers: registry.handlers } : {})
+          }
+        );
+        const out = resp.choices?.[0]?.message?.content ?? '';
+        if (options.json) process.stdout.write(JSON.stringify({ content: out }, null, 2) + '\n');
+        else process.stdout.write(out + '\n');
       } catch (e) {
         printError(e);
         process.exitCode = 1;
